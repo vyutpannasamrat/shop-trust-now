@@ -9,6 +9,7 @@ import ChatWidget from "./components/ChatWidget";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import ListProduct from "./pages/ListProduct";
 import AgentPortal from "./pages/AgentPortal";
 import Tracking from "./pages/Tracking";
 import Donate from "./pages/Donate";
@@ -33,6 +34,14 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/list-product"
+              element={
+                <ProtectedRoute>
+                  <ListProduct />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/agent"
               element={

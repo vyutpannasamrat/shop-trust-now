@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_context: {
+        Row: {
+          context_data: Json
+          context_type: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          context_data: Json
+          context_type: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          context_data?: Json
+          context_type?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       blockchain_certificates: {
         Row: {
           authenticity_proof: string
@@ -51,6 +78,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      breadcrumb_trails: {
+        Row: {
+          accuracy: number | null
+          alert_id: string | null
+          altitude: number | null
+          created_at: string | null
+          heading: number | null
+          id: string
+          is_synced: boolean | null
+          latitude: number
+          longitude: number
+          speed: number | null
+          timestamp: string | null
+          user_id: string
+        }
+        Insert: {
+          accuracy?: number | null
+          alert_id?: string | null
+          altitude?: number | null
+          created_at?: string | null
+          heading?: number | null
+          id?: string
+          is_synced?: boolean | null
+          latitude: number
+          longitude: number
+          speed?: number | null
+          timestamp?: string | null
+          user_id: string
+        }
+        Update: {
+          accuracy?: number | null
+          alert_id?: string | null
+          altitude?: number | null
+          created_at?: string | null
+          heading?: number | null
+          id?: string
+          is_synced?: boolean | null
+          latitude?: number
+          longitude?: number
+          speed?: number | null
+          timestamp?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       community_events: {
         Row: {
@@ -109,6 +181,87 @@ export type Database = {
         }
         Relationships: []
       }
+      emergency_broadcasts: {
+        Row: {
+          active: boolean | null
+          contacts_notified: Json | null
+          created_at: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          medical_info: Json | null
+          message: string
+          resolved_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          contacts_notified?: Json | null
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          medical_info?: Json | null
+          message: string
+          resolved_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          contacts_notified?: Json | null
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          medical_info?: Json | null
+          message?: string
+          resolved_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      emergency_contacts: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string
+          priority: number
+          relationship: string | null
+          updated_at: string | null
+          user_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone: string
+          priority?: number
+          relationship?: string | null
+          updated_at?: string | null
+          user_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string
+          priority?: number
+          relationship?: string | null
+          updated_at?: string | null
+          user_id?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       event_participants: {
         Row: {
           checked_in: boolean
@@ -143,6 +296,128 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      location_pings: {
+        Row: {
+          alert_id: string
+          id: string
+          latitude: number
+          longitude: number
+          timestamp: string | null
+        }
+        Insert: {
+          alert_id: string
+          id?: string
+          latitude: number
+          longitude: number
+          timestamp?: string | null
+        }
+        Update: {
+          alert_id?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_pings_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "sos_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      map_pins: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          latitude: number
+          longitude: number
+          pin_type: string
+          shared_with: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          latitude: number
+          longitude: number
+          pin_type: string
+          shared_with?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          latitude?: number
+          longitude?: number
+          pin_type?: string
+          shared_with?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          attachment_url: string | null
+          auto_delete_at: string | null
+          content: string
+          created_at: string | null
+          delivery_status: string | null
+          encrypted: boolean | null
+          id: string
+          message_type: string
+          read_at: string | null
+          receiver_id: string | null
+          sender_id: string
+          team_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attachment_url?: string | null
+          auto_delete_at?: string | null
+          content: string
+          created_at?: string | null
+          delivery_status?: string | null
+          encrypted?: boolean | null
+          id?: string
+          message_type?: string
+          read_at?: string | null
+          receiver_id?: string | null
+          sender_id: string
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attachment_url?: string | null
+          auto_delete_at?: string | null
+          content?: string
+          created_at?: string | null
+          delivery_status?: string | null
+          encrypted?: boolean | null
+          id?: string
+          message_type?: string
+          read_at?: string | null
+          receiver_id?: string | null
+          sender_id?: string
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       orders: {
         Row: {
@@ -202,6 +477,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      paired_devices: {
+        Row: {
+          battery_level: number | null
+          created_at: string | null
+          device_id: string
+          device_name: string
+          device_type: string
+          id: string
+          is_active: boolean | null
+          last_connected: string | null
+          paired_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          battery_level?: number | null
+          created_at?: string | null
+          device_id: string
+          device_name: string
+          device_type: string
+          id?: string
+          is_active?: boolean | null
+          last_connected?: string | null
+          paired_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          battery_level?: number | null
+          created_at?: string | null
+          device_id?: string
+          device_name?: string
+          device_type?: string
+          id?: string
+          is_active?: boolean | null
+          last_connected?: string | null
+          paired_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
@@ -377,6 +694,150 @@ export type Database = {
         }
         Relationships: []
       }
+      routes: {
+        Row: {
+          created_at: string | null
+          distance: number | null
+          duration: number | null
+          id: string
+          name: string
+          shared: boolean | null
+          shared_with: string[] | null
+          updated_at: string | null
+          user_id: string
+          waypoints: Json
+        }
+        Insert: {
+          created_at?: string | null
+          distance?: number | null
+          duration?: number | null
+          id?: string
+          name: string
+          shared?: boolean | null
+          shared_with?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          waypoints?: Json
+        }
+        Update: {
+          created_at?: string | null
+          distance?: number | null
+          duration?: number | null
+          id?: string
+          name?: string
+          shared?: boolean | null
+          shared_with?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          waypoints?: Json
+        }
+        Relationships: []
+      }
+      sensor_data: {
+        Row: {
+          created_at: string | null
+          data_type: string
+          id: string
+          timestamp: string | null
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string | null
+          data_type: string
+          id?: string
+          timestamp?: string | null
+          user_id: string
+          value: Json
+        }
+        Update: {
+          created_at?: string | null
+          data_type?: string
+          id?: string
+          timestamp?: string | null
+          user_id?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      sos_alerts: {
+        Row: {
+          contacts_notified: Json | null
+          created_at: string | null
+          id: string
+          location_lat: number | null
+          location_lng: number | null
+          message: string
+          resolved_at: string | null
+          status: string | null
+          triggered_at: string | null
+          user_id: string
+        }
+        Insert: {
+          contacts_notified?: Json | null
+          created_at?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          message: string
+          resolved_at?: string | null
+          status?: string | null
+          triggered_at?: string | null
+          user_id: string
+        }
+        Update: {
+          contacts_notified?: Json | null
+          created_at?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          message?: string
+          resolved_at?: string | null
+          status?: string | null
+          triggered_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sos_settings: {
+        Row: {
+          auto_share_location: boolean | null
+          countdown_seconds: number | null
+          created_at: string | null
+          default_message: string | null
+          id: string
+          silent_mode: boolean | null
+          updated_at: string | null
+          user_id: string
+          voice_trigger_enabled: boolean | null
+          voice_trigger_phrases: string[] | null
+        }
+        Insert: {
+          auto_share_location?: boolean | null
+          countdown_seconds?: number | null
+          created_at?: string | null
+          default_message?: string | null
+          id?: string
+          silent_mode?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          voice_trigger_enabled?: boolean | null
+          voice_trigger_phrases?: string[] | null
+        }
+        Update: {
+          auto_share_location?: boolean | null
+          countdown_seconds?: number | null
+          created_at?: string | null
+          default_message?: string | null
+          id?: string
+          silent_mode?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          voice_trigger_enabled?: boolean | null
+          voice_trigger_phrases?: string[] | null
+        }
+        Relationships: []
+      }
       sustainability_stats: {
         Row: {
           co2_offset_kg: number
@@ -416,6 +877,104 @@ export type Database = {
           updated_at?: string
           user_id?: string
           water_saved_liters?: number
+        }
+        Relationships: []
+      }
+      sync_queue: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          entity_id: string
+          entity_type: string
+          id: string
+          operation: string
+          synced: boolean | null
+          synced_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          operation: string
+          synced?: boolean | null
+          synced_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          operation?: string
+          synced?: boolean | null
+          synced_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          id: string
+          joined_at: string | null
+          role: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          role?: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          role?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          owner_id: string
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          settings?: Json | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -523,6 +1082,42 @@ export type Database = {
           occasion_tags?: string[] | null
           style_preferences?: string[] | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      volunteers: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          max_distance_km: number | null
+          notification_preferences: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          max_distance_km?: number | null
+          notification_preferences?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          max_distance_km?: number | null
+          notification_preferences?: Json | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []

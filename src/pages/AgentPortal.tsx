@@ -55,7 +55,7 @@ const AgentPortal = () => {
                   Verified Seller
                 </p>
               </div>
-              <Button variant="hero" size="lg">
+              <Button variant="hero" size="lg" onClick={() => window.location.href = '/list-product'}>
                 <PackageOpen className="h-4 w-4 mr-2" />
                 List New Item
               </Button>

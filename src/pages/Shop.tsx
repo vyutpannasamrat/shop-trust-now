@@ -1,74 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
 
 const Shop = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
 
-  // Mock product data
-  const products = [
-    {
-      id: "1",
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=600&fit=crop",
-      title: "Vintage Denim Jacket",
-      price: 1299,
-      originalPrice: 2499,
-      seller: "FashionHub Delhi",
-      verified: true,
-      condition: "Like New",
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['products', searchQuery, sortBy],
+    queryFn: async () => {
+      let query = supabase
+        .from('products')
+        .select('*')
+        .eq('is_available', true);
+
+      // Search filter
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,brand.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+      }
+
+      // Sorting
+      switch (sortBy) {
+        case 'price-low':
+          query = query.order('price', { ascending: true });
+          break;
+        case 'price-high':
+          query = query.order('price', { ascending: false });
+          break;
+        case 'recent':
+        default:
+          query = query.order('created_at', { ascending: false });
+      }
+
+      const { data: productsData, error } = await query;
+      if (error) throw error;
+
+      // Fetch seller profiles separately
+      const sellerIds = [...new Set(productsData.map(p => p.seller_id))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, city')
+        .in('user_id', sellerIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+
+      // Transform to match ProductCard props
+      return productsData.map(product => {
+        const profile = profileMap.get(product.seller_id);
+        return {
+          id: product.id,
+          image: product.images[0] || "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=600&fit=crop",
+          title: product.title,
+          price: product.price,
+          originalPrice: product.original_price,
+          seller: profile?.full_name || "Unknown Seller",
+          verified: product.verified,
+          condition: product.condition.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
+        };
+      });
     },
-    {
-      id: "2",
-      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop",
-      title: "Designer Summer Dress",
-      price: 899,
-      seller: "StyleCorner Mumbai",
-      verified: true,
-      condition: "Excellent",
-    },
-    {
-      id: "3",
-      image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=600&fit=crop",
-      title: "Classic White Sneakers",
-      price: 1599,
-      originalPrice: 2999,
-      seller: "SneakerZone",
-      verified: true,
-      condition: "Good",
-    },
-    {
-      id: "4",
-      image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=600&fit=crop",
-      title: "Leather Crossbody Bag",
-      price: 2199,
-      seller: "LuxeAccessories",
-      verified: true,
-      condition: "Like New",
-    },
-    {
-      id: "5",
-      image: "https://images.unsplash.com/photo-1578681994506-b8f463449011?w=400&h=600&fit=crop",
-      title: "Casual Blazer",
-      price: 1799,
-      originalPrice: 3499,
-      seller: "FormalFashion",
-      verified: true,
-      condition: "Excellent",
-    },
-    {
-      id: "6",
-      image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400&h=600&fit=crop",
-      title: "Boho Maxi Skirt",
-      price: 749,
-      seller: "BohoChic",
-      verified: false,
-      condition: "Good",
-    },
-  ];
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -96,7 +93,7 @@ const Shop = () => {
               </div>
               
               <div className="flex gap-2">
-                <Select defaultValue="recent">
+                <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
@@ -104,7 +101,6 @@ const Shop = () => {
                     <SelectItem value="recent">Most Recent</SelectItem>
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="popular">Most Popular</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -114,11 +110,22 @@ const Shop = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <ProductCard key={product.id} {...product} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No products found</p>
+                <p className="text-sm text-muted-foreground mt-2">Try adjusting your search</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {products.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>
