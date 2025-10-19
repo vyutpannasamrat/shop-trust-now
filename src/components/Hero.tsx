@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, TruckIcon, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-fashion.jpg";
 
 const Hero = () => {
+  const { user } = useAuth();
+  
   return (
     <section className="relative min-h-screen flex items-center pt-16">
       <div className="absolute inset-0 overflow-hidden">
@@ -35,11 +38,19 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/shop">
-              <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                Start Shopping
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/shop">
+                <Button variant="hero" size="lg" className="w-full sm:w-auto">
+                  Start Shopping
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth/signup">
+                <Button variant="hero" size="lg" className="w-full sm:w-auto">
+                  Get Started
+                </Button>
+              </Link>
+            )}
             <Link to="/agent">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 Become a Seller
