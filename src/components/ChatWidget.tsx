@@ -42,12 +42,12 @@ const ChatWidget = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-stylist`,
+        `https://tvwmddhlodfpqmxxwayw.supabase.co/functions/v1/ai-stylist`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2d21kZGhsb2RmcHFteHh3YXl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MjE0MzEsImV4cCI6MjA3NjE5NzQzMX0.wVJeOVvpE_djOX8VqJj2IUx_zsKYQ20E4rnj8zdpvW4`,
           },
           body: JSON.stringify({ 
             messages: newMessages.map(m => ({ role: m.role, content: m.content })),

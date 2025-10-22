@@ -124,6 +124,41 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_events: {
         Row: {
           city: string
@@ -297,6 +332,35 @@ export type Database = {
           },
         ]
       }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       location_pings: {
         Row: {
           alert_id: string
@@ -419,11 +483,88 @@ export type Database = {
         }
         Relationships: []
       }
+      ngos: {
+        Row: {
+          active: boolean
+          city: string
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          items_distributed: number
+          location: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          city: string
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          items_distributed?: number
+          location: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          city?: string
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          items_distributed?: number
+          location?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message: string
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           agent_id: string | null
           amount: number
           buyer_id: string
+          buyer_rating: number | null
+          buyer_review: string | null
           created_at: string
           delivery_address: string
           delivery_verification_photos: string[] | null
@@ -440,6 +581,8 @@ export type Database = {
           agent_id?: string | null
           amount: number
           buyer_id: string
+          buyer_rating?: number | null
+          buyer_review?: string | null
           created_at?: string
           delivery_address: string
           delivery_verification_photos?: string[] | null
@@ -456,6 +599,8 @@ export type Database = {
           agent_id?: string | null
           amount?: number
           buyer_id?: string
+          buyer_rating?: number | null
+          buyer_review?: string | null
           created_at?: string
           delivery_address?: string
           delivery_verification_photos?: string[] | null
@@ -540,6 +685,7 @@ export type Database = {
           is_donation: boolean
           length: number | null
           material: string | null
+          ngo_id: string | null
           original_price: number | null
           price: number
           seller_id: string
@@ -570,6 +716,7 @@ export type Database = {
           is_donation?: boolean
           length?: number | null
           material?: string | null
+          ngo_id?: string | null
           original_price?: number | null
           price: number
           seller_id: string
@@ -600,6 +747,7 @@ export type Database = {
           is_donation?: boolean
           length?: number | null
           material?: string | null
+          ngo_id?: string | null
           original_price?: number | null
           price?: number
           seller_id?: string
@@ -611,39 +759,53 @@ export type Database = {
           waist_max?: number | null
           waist_min?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_ngo_id_fkey"
+            columns: ["ngo_id"]
+            isOneToOne: false
+            referencedRelation: "ngos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
           avatar_url: string | null
+          average_rating: number | null
           bio: string | null
           city: string | null
           created_at: string
           full_name: string | null
           id: string
           phone: string | null
+          total_ratings: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          average_rating?: number | null
           bio?: string | null
           city?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           phone?: string | null
+          total_ratings?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          average_rating?: number | null
           bio?: string | null
           city?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           phone?: string | null
+          total_ratings?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -693,6 +855,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          product_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          product_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       routes: {
         Row: {
