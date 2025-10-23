@@ -1,35 +1,50 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Shirt, TrendingUp } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface NGO {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string;
+  items_distributed: number;
+}
 
 const Donate = () => {
+  const navigate = useNavigate();
+  const [ngos, setNgos] = useState<NGO[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const impactStats = [
     { label: "Items Donated", value: "12,450", icon: Shirt },
     { label: "Families Helped", value: "3,200", icon: Users },
     { label: "This Month", value: "+450", icon: TrendingUp },
   ];
 
-  const ngos = [
-    {
-      name: "Hope Foundation",
-      description: "Supporting underprivileged families with clothing and education",
-      image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=300&fit=crop",
-      impact: "2,340 items distributed",
-    },
-    {
-      name: "Smile Charity",
-      description: "Providing clothing to children in need across India",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=300&fit=crop",
-      impact: "1,890 items distributed",
-    },
-    {
-      name: "Care & Share",
-      description: "Empowering communities through clothing donation programs",
-      image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400&h=300&fit=crop",
-      impact: "1,450 items distributed",
-    },
-  ];
+  useEffect(() => {
+    fetchNGOs();
+  }, []);
+
+  const fetchNGOs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ngos')
+        .select('id, name, description, image_url, items_distributed')
+        .eq('active', true)
+        .order('items_distributed', { ascending: false });
+
+      if (error) throw error;
+      setNgos(data || []);
+    } catch (error) {
+      console.error('Error fetching NGOs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,31 +83,37 @@ const Donate = () => {
 
             <div>
               <h2 className="text-3xl font-bold mb-6 text-center">Our Partner NGOs</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {ngos.map((ngo, index) => (
-                  <Card key={index} className="overflow-hidden border-border hover:shadow-[var(--shadow-elegant)] transition-all">
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={ngo.image}
-                        alt={ngo.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        {ngo.name}
-                        <Heart className="h-4 w-4 text-accent fill-accent" />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">{ngo.description}</p>
-                      <div className="pt-2 border-t border-border">
-                        <p className="text-sm font-semibold text-primary">{ngo.impact}</p>
+              {loading ? (
+                <p className="text-center text-muted-foreground">Loading NGOs...</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {ngos.map((ngo) => (
+                    <Card key={ngo.id} className="overflow-hidden border-border hover:shadow-[var(--shadow-elegant)] transition-all">
+                      <div className="aspect-video overflow-hidden">
+                        <img
+                          src={ngo.image_url || "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=300&fit=crop"}
+                          alt={ngo.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          {ngo.name}
+                          <Heart className="h-4 w-4 text-accent fill-accent" />
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-sm text-muted-foreground">{ngo.description}</p>
+                        <div className="pt-2 border-t border-border">
+                          <p className="text-sm font-semibold text-primary">
+                            {ngo.items_distributed} items distributed
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-border">
@@ -104,7 +125,7 @@ const Donate = () => {
                   List your pre-loved clothes on StyleHub and choose to donate all proceeds 
                   to the NGO of your choice. Every item makes a difference!
                 </p>
-                <Button variant="hero" size="lg">
+                <Button variant="hero" size="lg" onClick={() => navigate('/list-product?donation=true')}>
                   Start Donating
                 </Button>
               </CardContent>

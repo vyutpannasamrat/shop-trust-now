@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -13,13 +13,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, X, Loader2 } from "lucide-react";
 
+interface NGO {
+  id: string;
+  name: string;
+  description: string;
+}
+
 const ListProduct = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [ngos, setNgos] = useState<NGO[]>([]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -32,10 +40,30 @@ const ListProduct = () => {
     condition: "good",
     price: "",
     original_price: "",
-    is_donation: false,
+    is_donation: searchParams.get('donation') === 'true',
+    ngo_id: "",
     material: "",
     care_instructions: "",
   });
+
+  useEffect(() => {
+    fetchNGOs();
+  }, []);
+
+  const fetchNGOs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ngos')
+        .select('id, name, description')
+        .eq('active', true)
+        .order('name');
+
+      if (error) throw error;
+      setNgos(data || []);
+    } catch (error) {
+      console.error('Error fetching NGOs:', error);
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -129,6 +157,7 @@ const ListProduct = () => {
           price: formData.is_donation ? 0 : parseFloat(formData.price),
           original_price: formData.original_price ? parseFloat(formData.original_price) : null,
           is_donation: formData.is_donation,
+          ngo_id: formData.is_donation && formData.ngo_id ? formData.ngo_id : null,
           material: formData.material || null,
           care_instructions: formData.care_instructions || null,
           images: [], // Will update after upload
@@ -345,6 +374,31 @@ const ListProduct = () => {
                       Donate this item (free for recipient)
                     </Label>
                   </div>
+
+                  {formData.is_donation && (
+                    <div className="space-y-2">
+                      <Label htmlFor="ngo">Select NGO *</Label>
+                      <Select
+                        value={formData.ngo_id}
+                        onValueChange={(value) => setFormData({...formData, ngo_id: value})}
+                        required={formData.is_donation}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose an NGO to donate to" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ngos.map((ngo) => (
+                            <SelectItem key={ngo.id} value={ngo.id}>
+                              {ngo.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-sm text-muted-foreground">
+                        Your item will be donated to this NGO
+                      </p>
+                    </div>
+                  )}
 
                   {!formData.is_donation && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
