@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_assignments: {
+        Row: {
+          accepted_at: string | null
+          agent_id: string
+          assigned_at: string
+          created_at: string
+          current_location: Json | null
+          estimated_delivery_time: string | null
+          estimated_pickup_time: string | null
+          id: string
+          order_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          agent_id: string
+          assigned_at?: string
+          created_at?: string
+          current_location?: Json | null
+          estimated_delivery_time?: string | null
+          estimated_pickup_time?: string | null
+          id?: string
+          order_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          agent_id?: string
+          assigned_at?: string
+          created_at?: string
+          current_location?: Json | null
+          estimated_delivery_time?: string | null
+          estimated_pickup_time?: string | null
+          id?: string
+          order_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_assignments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_context: {
         Row: {
           context_data: Json
