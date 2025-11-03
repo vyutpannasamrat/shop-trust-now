@@ -143,7 +143,12 @@ const Cart = () => {
                     </div>
                   </div>
 
-                  <Button className="w-full" variant="hero" size="lg">
+                  <Button 
+                    className="w-full" 
+                    variant="hero" 
+                    size="lg"
+                    onClick={() => navigate('/checkout')}
+                  >
                     Proceed to Checkout
                   </Button>
                   

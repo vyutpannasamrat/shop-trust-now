@@ -17,6 +17,7 @@ import Donate from "./pages/Donate";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import Favorites from "./pages/Favorites";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -38,7 +39,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/signup" element={<Signup />} />
