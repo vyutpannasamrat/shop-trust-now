@@ -19,6 +19,9 @@ import Orders from "./pages/Orders";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Favorites from "./pages/Favorites";
+import Sustainability from "./pages/Sustainability";
+import Leaderboard from "./pages/Leaderboard";
+import Rewards from "./pages/Rewards";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -87,6 +90,9 @@ const App = () => (
                 }
               />
               <Route path="/donate" element={<Donate />} />
+              <Route path="/sustainability" element={<Sustainability />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/rewards" element={<Rewards />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

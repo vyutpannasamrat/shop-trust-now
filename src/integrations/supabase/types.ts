@@ -91,6 +91,42 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          created_at: string
+          description: string
+          eco_points_reward: number
+          icon: string
+          id: string
+          name: string
+          requirement_type: string
+          requirement_value: number
+          tier: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          eco_points_reward?: number
+          icon: string
+          id?: string
+          name: string
+          requirement_type: string
+          requirement_value: number
+          tier?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          eco_points_reward?: number
+          icon?: string
+          id?: string
+          name?: string
+          requirement_type?: string
+          requirement_value?: number
+          tier?: string
+        }
+        Relationships: []
+      }
       blockchain_certificates: {
         Row: {
           authenticity_proof: string
@@ -944,6 +980,84 @@ export type Database = {
           },
         ]
       }
+      reward_redemptions: {
+        Row: {
+          completed_at: string | null
+          eco_points_spent: number
+          id: string
+          notes: string | null
+          redeemed_at: string
+          redemption_code: string | null
+          reward_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          eco_points_spent: number
+          id?: string
+          notes?: string | null
+          redeemed_at?: string
+          redemption_code?: string | null
+          reward_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          eco_points_spent?: number
+          id?: string
+          notes?: string | null
+          redeemed_at?: string
+          redemption_code?: string | null
+          reward_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rewards: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string
+          eco_points_cost: number
+          id: string
+          image_url: string | null
+          reward_type: string
+          reward_value: Json
+          stock_quantity: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description: string
+          eco_points_cost: number
+          id?: string
+          image_url?: string | null
+          reward_type: string
+          reward_value: Json
+          stock_quantity?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          eco_points_cost?: number
+          id?: string
+          image_url?: string | null
+          reward_type?: string
+          reward_value?: Json
+          stock_quantity?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       routes: {
         Row: {
           created_at: string | null
@@ -1092,6 +1206,7 @@ export type Database = {
         Row: {
           co2_offset_kg: number
           created_at: string
+          eco_points: number
           id: string
           items_donated: number
           items_recycled: number
@@ -1105,6 +1220,7 @@ export type Database = {
         Insert: {
           co2_offset_kg?: number
           created_at?: string
+          eco_points?: number
           id?: string
           items_donated?: number
           items_recycled?: number
@@ -1118,6 +1234,7 @@ export type Database = {
         Update: {
           co2_offset_kg?: number
           created_at?: string
+          eco_points?: number
           id?: string
           items_donated?: number
           items_recycled?: number
@@ -1225,6 +1342,27 @@ export type Database = {
           owner_id?: string
           settings?: Json | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
         }
         Relationships: []
       }
